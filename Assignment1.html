@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <style>
+        #fieldContainer {
+            display: flex;
+            flex-direction: column;
+        }
+
+        input,
+        #coutryState {
+            margin: 5px;
+        }
+        .container{
+            background-color: palegoldenrod;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h3>Shipping address</h3>
+        <div id="nameContainer">
+            <input type="text" placeholder="First name(optional)">
+            <input type="text" placeholder="Last name">
+        </div>
+        <div id="fieldContainer">
+            <input type="text" placeholder="PIN code" id="pin" value="" onkeyup="handlePin()">
+            <input type="text" placeholder="Address" id="address" value="">
+            <input type="text" placeholder="Apartment,suite,etc.(optional)" id="apart" value="">
+            <input type="text" placeholder="City" id="city" value="">
+        </div>
+        <div id="coutryState">
+            <select id="countries">
+                <option value="china" id="country">China</option>
+                <option value="india">India</option>
+                <option value="Aus">Australia</option>
+                <option value="jap">japan</option>
+                <option value="us">USA</option>
+            </select>
+            <select id="State">
+                <option value="xyz" id="state">XYZ</option>
+                <option value="pqr">PQR</option>
+                <option value="abc">ABC</option>
+                <option value="fgh">FGH</option>
+            </select>
+        </div>
+        <div id="phone">
+            <input type="text" placeholder="Phone" value="">
+        </div>
+    </div>
+    <script>
+
+        var users;
+        function handlePin() {
+            var res = document.getElementById('pin').value;
+            if (res.length == 6) {
+                // $(document).ready(function () {
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function () {
+                        if (this.readyState == 4 && this.status == 200) {
+                            users = JSON.parse(this.responseText);
+                            for (var i in users) {
+                                console.log("users[i]", users[i])
+                                if (users[i].PostOffice[i].Pincode == res) {
+                                    console.log("hit")
+                                    var city = users[i].PostOffice[i].Region;
+                                    var add = users[i].PostOffice[i].District;
+                                    var country = users[i].PostOffice[i].Country;
+                                    var state = users[i].PostOffice[i].State;
+
+                                    document.getElementById("city").value = city;
+                                    document.getElementById("address").value = add;
+                                    document.getElementById("country").innerHTML = country;
+                                    document.getElementById("state").innerHTML = state;
+                                    break;
+                                } else {
+                                    console.log("no match")
+                                }
+                            }
+                        }
+                    };
+                    console.log(res)
+                    xhttp.open("GET", "https://api.postalpincode.in/pincode/" + res, true);
+                    xhttp.send();
+                // });
+
+            }
+        }
+    </script>
+</body>
+
+</html>
